@@ -34,6 +34,8 @@ env:
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
 
+permissions: write-all
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -45,6 +47,7 @@ jobs:
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       run: |
         dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 100
         df -h
@@ -184,7 +187,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
@@ -203,4 +206,4 @@ jobs:
         keep_latest: 5
         delete_tags: true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
